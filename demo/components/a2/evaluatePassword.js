@@ -9,7 +9,9 @@ router.post('/evaluations/password', (req, res) => {
   const sessionId = req.body.sessionId;
   const userAgent = req.headers['user-agent'];
   const ipAddress = req.ip;
-  const context = {sessionId, userAgent, ipAddress};
+  const evaluationContext = req.body.evaluationContext;
+  const context = {sessionId, userAgent, ipAddress,
+    evaluationContext};
 
   // Extract parameters from request.
   const transactionId = req.body.transactionId;

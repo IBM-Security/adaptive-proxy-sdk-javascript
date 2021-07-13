@@ -203,6 +203,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @return {Promise&lt;Object>} The policy evaluation result object. The result
    * object has a &lt;code>status&lt;/code> property of either &lt;code>deny&lt;/code>, or
    * &lt;code>requires&lt;/code>. If &lt;code>deny&lt;/code>, only the &lt;code>status&lt;/code>
@@ -221,7 +228,9 @@ class Adaptive {
    *   allowedFactors: ['qr', 'fido', 'password']
    * }
    */
-  async assessPolicy(context) {
+  async assessPolicy({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const policyService = new PolicyService({clientId: this._config.clientId,
       clientSecret: this._config.clientSecret}, this._config.tenantUrl,
     context);
@@ -268,6 +277,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} relyingPartyId The identifier of relying party associated
@@ -293,7 +309,9 @@ class Adaptive {
    *   }
    * }
    */
-  async generateFIDO(context, transactionId, relyingPartyId, userId) {
+  async generateFIDO({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, relyingPartyId, userId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -322,6 +340,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} relyingPartyId The identifier of relying party associated
@@ -386,8 +411,10 @@ class Adaptive {
    *   ]
    * }
    */
-  async evaluateFIDO(context, transactionId, relyingPartyId, authenticatorData,
-      userHandle, signature, clientDataJSON) {
+  async evaluateFIDO({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, relyingPartyId,
+  authenticatorData, userHandle, signature, clientDataJSON) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.fido) {
@@ -429,9 +456,16 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
-   * @param {string} sourceName The source name to look up.
+   * @param {string} [sourceName] The source name to look up.
    * @return {Promise&lt;Object>} The result object. The result
    * object contains an array of identity sources for this user.
    * @example &lt;caption>Result object&lt;/caption>
@@ -444,7 +478,9 @@ class Adaptive {
    *   }
    * ]
    */
-  async lookupIdentitySources(context, transactionId, sourceName) {
+  async lookupIdentitySources({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, sourceName) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -471,6 +507,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} identitySourceId The identifier of the identity source
@@ -529,8 +572,10 @@ class Adaptive {
    *   ]
    * }
    */
-  async evaluatePassword(context, transactionId, identitySourceId, username,
-      password) {
+  async evaluatePassword({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, identitySourceId, username,
+  password) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -569,6 +614,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} assertion The JWT assertion to validate.
    * @param {string} userId The user ID for which to retrieve enrollments on a
    * &lt;code>requires&lt;/code> response.
@@ -637,6 +689,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} profileId The identifier of an IBM Verify registration
@@ -650,7 +709,9 @@ class Adaptive {
    *   }
    * }
    */
-  async generateQR(context, transactionId, profileId) {
+  async generateQR({sessionId, userAgent, ipAddress, evaluationContext='login'},
+      transactionId, profileId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -678,6 +739,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @return {Promise&lt;Object>} Either QR transaction state result object
@@ -751,7 +819,9 @@ class Adaptive {
    *   ]
    * }
    */
-  async evaluateQR(context, transactionId) {
+  async evaluateQR({sessionId, userAgent, ipAddress, evaluationContext='login'},
+      transactionId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.qr) {
@@ -805,6 +875,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} enrollmentId The identifier of the enrollment to perform
@@ -814,7 +891,9 @@ class Adaptive {
    * been received from the JWT validation, along with the &lt;code>status&lt;/code>
    * property of &lt;code>allow&lt;/code>.
    */
-  async evaluateTOTP(context, transactionId, enrollmentId, otp) {
+  async evaluateTOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, enrollmentId, otp) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -839,6 +918,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * @param {string} enrollmentId The identifier of the enrollment to perform
    * second-factor verification with.
@@ -846,7 +932,9 @@ class Adaptive {
    * verification. It will be prefixed to the one-time password in the Email to
    * be sent.
    */
-  async generateEmailOTP(context, transactionId, enrollmentId) {
+  async generateEmailOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, enrollmentId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -874,6 +962,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} otp The email OTP received in the email after the email OTP
@@ -883,7 +978,9 @@ class Adaptive {
    * been received from the JWT validation, along with the &lt;code>status&lt;/code>
    * property of &lt;code>allow&lt;/code>.
    */
-  async evaluateEmailOTP(context, transactionId, otp) {
+  async evaluateEmailOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, otp) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.emailotp) {
@@ -914,6 +1011,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * @param {string} enrollmentId The identifier of the enrollment to perform
    * second-factor verification with.
@@ -921,7 +1025,9 @@ class Adaptive {
    * verification. It will be prefixed to the one-time password in the SMS to be
    * sent.
    */
-  async generateSMSOTP(context, transactionId, enrollmentId) {
+  async generateSMSOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, enrollmentId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -949,6 +1055,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} otp The SMS OTP received on the phone after the SMS OTP
@@ -958,7 +1071,9 @@ class Adaptive {
    * been received from the JWT validation, along with the &lt;code>status&lt;/code>
    * property of &lt;code>allow&lt;/code>.
    */
-  async evaluateSMSOTP(context, transactionId, otp) {
+  async evaluateSMSOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, otp) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.smsotp) {
@@ -989,13 +1104,22 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * @param {string} enrollmentId The identifier of the enrollment to perform
    * second-factor verification with.
    * @return {Promise&lt;Object>} The a four-digit correlation associated with the
    * verification.  This is not used by default in a Voice OTP call.
    */
-  async generateVoiceOTP(context, transactionId, enrollmentId) {
+  async generateVoiceOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, enrollmentId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -1023,6 +1147,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} otp The Voice OTP received on the phone after the Voice OTP
@@ -1032,7 +1163,9 @@ class Adaptive {
    * been received from the JWT validation, along with the &lt;code>status&lt;/code>
    * property of &lt;code>allow&lt;/code>.
    */
-  async evaluateVoiceOTP(context, transactionId, otp) {
+  async evaluateVoiceOTP({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, otp) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.voiceotp) {
@@ -1063,6 +1196,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} enrollmentId The identifier of the enrollment to perform
@@ -1087,7 +1227,9 @@ class Adaptive {
    *   ]
    * }
    */
-  async generateQuestions(context, transactionId, enrollmentId) {
+  async generateQuestions({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, enrollmentId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -1116,6 +1258,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {Object[]} questions The array of question keys and corresponding
@@ -1146,7 +1295,9 @@ class Adaptive {
    *   }
    * }
    */
-  async evaluateQuestions(context, transactionId, questions) {
+  async evaluateQuestions({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, questions) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.questions) {
@@ -1178,6 +1329,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @param {string} enrollmentId The identifier of the signature enrollment to
@@ -1197,8 +1355,10 @@ class Adaptive {
    * displayed in the user agent to link transaction to verification request
    * in authenticator app.
    */
-  async generatePush(context, transactionId, enrollmentId, authenticatorId,
-      message, pushNotificationTitle, pushNotificationMessage, additionalData) {
+  async generatePush({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId, enrollmentId, authenticatorId,
+  message, pushNotificationTitle, pushNotificationMessage, additionalData) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
 
@@ -1229,13 +1389,22 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} transactionId The identifier of the transaction received in
    * {@link Adaptive#assessPolicy}.
    * @return {Promise&lt;Object>} The access and refresh tokens which should have
    * been received from the JWT validation, along with the &lt;code>status&lt;/code>
    * property of &lt;code>allow&lt;/code>.
    */
-  async evaluatePush(context, transactionId) {
+  async evaluatePush({sessionId, userAgent, ipAddress,
+    evaluationContext='login'}, transactionId) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     const transaction = this._transactionFunctions
         .getTransaction(transactionId);
     if (!transaction.push) {
@@ -1297,6 +1466,13 @@ class Adaptive {
    * @param {string} context.userAgent The user-agent, typically obtained form
    * the User-Agent HTTP header.
    * @param {string} context.ipAddress The IP address of the user-agent.
+   * @param {string} [context.evaluationContext="login"] The stage in the
+   * user-agent for which to perform an evaluation. (Used for continuous
+   * assessment throughout the user-agent.) Different "stages" or "contexts"
+   * will result in different evaluation results, as configured in the
+   * sub-policies of the tenant application's policy. Possible options are
+   * "login" (default), "landing", "profile", "resume", "highassurance",
+   * "other".
    * @param {string} refreshToken The refresh token to refresh the access token
    * with.
    * @return {Promise&lt;Object>} The policy evaluation result object. The result
@@ -1352,7 +1528,9 @@ class Adaptive {
    *   ]
    * }
    */
-  async refresh(context, refreshToken) {
+  async refresh({sessionId, userAgent, ipAddress, evaluationContext='login'},
+      refreshToken) {
+    const context = {sessionId, userAgent, ipAddress, evaluationContext};
     let assessment;
     try {
       const tokenService = new TokenService({clientId: this._config.clientId,
@@ -1523,7 +1701,7 @@ module.exports = Adaptive;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Mon May 10 2021 14:50:11 GMT+1000 (Australian Eastern Standard Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Wed Jun 16 2021 09:46:38 GMT+1000 (Australian Eastern Standard Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

@@ -10,7 +10,9 @@ router.post('/assessments', (req, res) => {
   const sessionId = req.body.sessionId;
   const userAgent = req.headers['user-agent'];
   const ipAddress = req.ip;
-  const context = {sessionId, userAgent, ipAddress};
+  const evaluationContext = req.body.evaluationContext;
+  const context = {sessionId, userAgent, ipAddress,
+    evaluationContext};
 
   // Perform a risk assessment.
   adaptive.assessPolicy(context)
