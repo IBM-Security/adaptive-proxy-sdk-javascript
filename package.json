@@ -16,7 +16,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.0",
+    "axios": "^1.8.2",
     "lru-cache": "^7.10.1",
     "node-cache": "^5.1.2",
     "uuid": "^8.3.2"
