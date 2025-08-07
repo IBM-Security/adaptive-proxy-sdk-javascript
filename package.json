@@ -1,7 +1,7 @@
 {
   "name": "@ibm-verify/adaptive-proxy",
-  "version": "1.7.0",
-  "description": "The Proxy SDK for server-side JavaScript ([Node](https://nodejs.org)). The purpose of this library is to provide an interface for device authentication, authorization, and risk assessment using IBM Security Verify.",
+  "version": "1.8.0",
+  "description": "The Proxy SDK for server-side JavaScript ([Node](https://nodejs.org)). The purpose of this library is to provide an interface for device authentication, authorization, and risk assessment using IBM Verify.",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
@@ -12,11 +12,11 @@
   "author": "Adam Dorogi-Kaposi <adam.dorogi-kaposi@ibm.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IBM-Security/adaptive-proxy-sdk-javascript.git"
+    "url": "git+https://github.com/IBM-Verify/adaptive-proxy-sdk-javascript.git"
   },
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.8.2",
+    "axios": "1.8.2",
     "lru-cache": "^7.10.1",
     "node-cache": "^5.1.2",
     "uuid": "^8.3.2"
@@ -29,9 +29,9 @@
     "mocha": "^10.0.0"
   },
   "bugs": {
-    "url": "https://github.com/IBM-Security/adaptive-proxy-sdk-javascript/issues"
+    "url": "https://github.com/IBM-Verify/adaptive-proxy-sdk-javascript/issues"
   },
-  "homepage": "https://github.com/IBM-Security/adaptive-proxy-sdk-javascript#readme",
+  "homepage": "https://github.com/IBM-Verify/adaptive-proxy-sdk-javascript#readme",
   "directories": {
     "doc": "docs",
     "lib": "lib",
